@@ -113,12 +113,12 @@ while (menu)
                     Console.WriteLine("Некоректно введены данные. Повторите попытку");
             }
 
-            PlayQuiz(ref Quizzes[userInput], ref )
+            PlayQuiz(Quizzes[userInput], userBase.GetUser(currentUserIndex));
 
             break;
 
         case UserMenu.checkUserResults:
-
+            userBase.GetUser(currentUserIndex).PrintArchiveResults();
             break;
 
         case UserMenu.checkTop20:
@@ -135,7 +135,7 @@ while (menu)
 }
 
 
-static void PlayQuiz(ref Direction quiz, ref User user)
+static void PlayQuiz(Direction quiz, User user)
 {
     var tempQuiz = new Direction(ref quiz);
     int index = 0;
@@ -176,6 +176,8 @@ static void PlayQuiz(ref Direction quiz, ref User user)
         Console.WriteLine("Ваш результат добавлен в топ 20 лучших результатов викторины");
     else
         Console.WriteLine("Вашего результата недостаточно для добавления в топ 20 лучших результатов");
+
+    user.SaveResults(quiz.Name, userPoints);
 }
 
 public enum UserMenu

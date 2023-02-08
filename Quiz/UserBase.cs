@@ -14,6 +14,20 @@ namespace Quiz
         {
             this.users = users;
         }
+        public bool ChangePassword(int index)
+        {
+            Console.WriteLine("Введите старый пароль");
+
+            if(Console.ReadLine() == users[index].Password)
+            {
+                Console.WriteLine("Введите новый пароль");
+                users[index].Password = Console.ReadLine();
+                Console.WriteLine("Пароль изменен");
+                return true;
+            }
+
+            return false;            
+        }
         public int GetUserIndex(string userLogin)
         {
             if (users == null || users.Count == 0 || userLogin == null)

@@ -99,7 +99,8 @@ while (menu)
             menu = false;
             break;
 
-        case UserMenu.startQuiz:            
+        case UserMenu.startQuiz:
+            Console.Clear();
             while (true)
             {
                 Console.WriteLine("Выберите викторину");
@@ -113,6 +114,8 @@ while (menu)
                     Console.WriteLine("Некоректно введены данные. Повторите попытку");
             }
 
+            Console.Clear();
+
             PlayQuiz(Quizzes[userInput], userBase.GetUser(currentUserIndex));
 
             break;
@@ -122,10 +125,26 @@ while (menu)
             break;
 
         case UserMenu.checkTop20:
+            Console.Clear();
+            while (true)
+            {
+                Console.WriteLine("Выберите викторину");
 
+                for (int i = 0; i < Quizzes.Count; i++)
+                    Console.WriteLine($"{i} - {Quizzes[i].Name}");
+
+                if (int.TryParse(Console.ReadLine(), out userInput) && userInput >= 0 && userInput < Quizzes.Count)
+                    break;
+                else
+                    Console.WriteLine("Некоректно введены данные. Повторите попытку");
+            }
+
+            Quizzes[userInput].PrintTop20();
             break;
 
         case UserMenu.changeUserData:
+            Console.Clear();
+
 
             break;
 

@@ -10,13 +10,83 @@ namespace Quiz
     {
         public string? Name { get; set; }
         List<QuestionBlock> questions;
-
+        List<UserTop20> top20 = new List<UserTop20>();
+        
         Random random = new Random();
         public Direction(string name)
         {
             Name = name;
             questions = new List<QuestionBlock>();
         }
+        public Direction(ref Direction other)
+        {
+            this.Name = other.Name;
+            this.questions = new List<QuestionBlock>();
+            for (int i = 0; i < other.GetQuestionsCount(); i++)
+            {
+                this.questions.Add(other.questions[i]);
+            }
+        }
+        public bool AddTop20(string name, int value)
+        {
+            if (name == null || value < 0)
+                return false;
+            
+            if(top20.Count < 20)
+            {
+                top20.Add(new UserTop20(name, value));
+                SortTop20();
+                return true;
+            }
+            else
+            {
+                if (value > top20[19].value)
+                {
+                    top20.RemoveAt(19);
+                    top20.Add(new UserTop20(name, value));
+                    SortTop20();
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+        public void SortTop20()
+        {
+            UserTop20 temp;
+            for (int i = 0; i < top20.Count; i++)
+            {
+                for (int j = 0; j < top20.Count; j++)
+                {
+                    if (top20[i].value < top20[j].value)
+                    {
+                        temp = top20[i];
+                        top20[i] = top20[j];
+                        top20[j] = temp;
+                    }
+                }
+            }
+        }
+        public void PrintTop20()
+        {
+            for (int i = 0; i < top20.Count; i++)
+            {
+                Console.WriteLine($"{i + 1} {top20[i].name} {top20[i].value} правильных ответов");
+            }
+        }
+        public int GetAnswerCount(int questionIndex)
+        {
+            return questions[questionIndex].answerOptions.Count;
+        }
+        public int GetQuestionsCount()
+        {
+            return questions.Count;
+        }
+        public void RemoveQuestion(int index)
+        {
+            questions.Remove(questions[index]);
+        }
+
         public QuestionBlock GetRandomQuestion()
         {
             if (questions == null || questions.Count == 0)
@@ -27,6 +97,11 @@ namespace Quiz
 
             else
                 return questions[random.Next(0, questions.Count - 1)];
+        }
+
+        public int GetRandomIndexQuestion()
+        {
+            return random.Next(0, questions.Count - 1);
         }
 
         public void PrintQuestion(int index)

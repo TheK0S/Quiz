@@ -9,7 +9,7 @@ var Quizzes = new List<Direction>();
 var userAnswer = new List<int>();
 var ansOpt = new List<string>();
 var userBase = new UserBase(new List<User>());
-User currentUser;
+int currentUserIndex;
 int userInput;
 string login, password, nickName, birthDate;
 bool menu = true;
@@ -43,7 +43,7 @@ while (true)
             if (userBase.Authorization(login, password))
             {
                 Console.WriteLine("Авторизация прошла успешно");
-                currentUser = 
+                currentUserIndex = userBase.GetUserIndex(login);
                 break;
             }
             else
@@ -113,7 +113,7 @@ while (menu)
                     Console.WriteLine("Некоректно введены данные. Повторите попытку");
             }
 
-            PlayQuiz(ref Quizzes[userInput], )
+            PlayQuiz(ref Quizzes[userInput], ref )
 
             break;
 

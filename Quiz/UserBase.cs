@@ -27,6 +27,10 @@ namespace Quiz
 
             return -1;
         }
+        public User GetUser(int index)
+        {
+            return users[index];
+        }
         public bool Authorization(string userLogin, string userPassword)
         {
             if(users == null || users.Count == 0)

@@ -144,7 +144,7 @@ while (menu)
 
         case UserMenu.changeUserData:
             Console.Clear();
-
+            userBase.ChangePassword(currentUserIndex);
 
             break;
 

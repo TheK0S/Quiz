@@ -24,13 +24,30 @@ namespace Quiz
         }
         public void SaveResults(string nameDirection, int points)
         {
-            archive.Add(new nameDirection, points);
+            archive.Add(new UserTop20(nameDirection, points));
         }
         
+        public void SortArchive()
+        {
+            UserTop20 temp;
+            for (int i = 0; i < archive.Count; i++)
+            {
+                for (int j = 0; j < archive.Count; j++)
+                {
+                    if (archive[i].value < archive[j].value)
+                    {
+                        temp = archive[i];
+                        archive[i] = archive[j];
+                        archive[j] = temp;
+                    }
+                }
+            }
+        }
+
         public void PrintArchiveResults()
         {
             foreach (var result in archive)
-                Console.WriteLine($"Викторина: {result.Key}, Количество набранных баллов: {result.Value}");
+                Console.WriteLine($"Викторина: {result.name}, Количество набранных баллов: {result.value}");
         }
     }
 }

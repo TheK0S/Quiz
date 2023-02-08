@@ -22,6 +22,7 @@ namespace Quiz
             Password = password;
             BirthDate = birthDate;
         }
+
         public void SaveResults(string nameDirection, int points)
         {
             archive.Add(new UserTop20(nameDirection, points));

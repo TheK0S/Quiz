@@ -14,6 +14,19 @@ namespace Quiz
         {
             this.users = users;
         }
+        public int GetUserIndex(string userLogin)
+        {
+            if (users == null || users.Count == 0 || userLogin == null)
+                return -1;
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].Login == userLogin)
+                    return i;
+            } 
+
+            return -1;
+        }
         public bool Authorization(string userLogin, string userPassword)
         {
             if(users == null || users.Count == 0)

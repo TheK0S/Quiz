@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Quiz
 {
@@ -27,6 +29,17 @@ namespace Quiz
             }
 
             return false;            
+        }
+        public void Serealize()
+        {
+            try
+            {
+                File.WriteAllText("userBase.json", JsonConvert.SerializeObject(users));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Ошибка при сохранении данных пользователя");
+            }            
         }
         public int GetUserIndex(string userLogin)
         {

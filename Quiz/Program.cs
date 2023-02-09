@@ -1,14 +1,26 @@
-﻿
+﻿using Newtonsoft.Json;
+using System.IO;
 
 
 using Quiz;
 using static Quiz.Direction;
+using System.Collections.Generic;
 
+//Чтение списка викторин из файла
 var Quizzes = new List<Direction>();
+ReadQuizzesList(ref Quizzes);
 
+//Чтение списка зарегестрированных пользователей из файла
+var userBase = new UserBase(new List<User>());
+ReadUsersList(ref userBase);
+
+string json;
 var userAnswer = new List<int>();
 var ansOpt = new List<string>();
-var userBase = new UserBase(new List<User>());
+
+
+
+
 int currentUserIndex;
 int userInput;
 string login, password, nickName, birthDate;
@@ -18,19 +30,45 @@ bool menu = true;
 
 while (true)
 {
-
-
     while (true)
     {
         Console.WriteLine("Введите действие");
-        Console.WriteLine("1 - Вход\n2 - Регистрация");
-        if (int.TryParse(Console.ReadLine(), out userInput) && userInput >= 1 && userInput <= 2)
+        Console.WriteLine("0 - Редактор Викторины\n1 - Вход\n2 - Регистрация");
+        if (int.TryParse(Console.ReadLine(), out userInput) && userInput >= 0 && userInput <= 2)
             break;
         else
             Console.WriteLine("Некоректно введены данные. Повторите попытку");
     }
+    if(userInput == 0)
+    {
+        while(true)
+        {
+            Console.WriteLine("Введите выбор");
+            Console.WriteLine("1 - Добавить новую викторину");
+            Console.WriteLine("2 - Редактор викторин");
 
-    if (userInput == 1)
+            if (int.TryParse(Console.ReadLine(), out userInput) && userInput >= 1 && userInput < 2)
+                break;
+            else
+                Console.WriteLine("Некоректно введены данные. Повторите попытку");
+        }
+
+        if(userInput == 1)
+        {
+            var questions = new List<QuestionBlock>();
+            var top20 = new List<UserTop20>();
+            Console.WriteLine("Введите название викторины");
+            string nameQuiz = Console.ReadLine() ?? "";
+            
+
+            Quizzes.Add(new Direction(nameQuiz, questions, top20));
+        }
+        if (userInput == 2)
+        {
+
+        }
+    }
+    else if (userInput == 1)
     {
         while (true)
         {
@@ -154,6 +192,47 @@ while (menu)
 }
 
 
+static void ReadQuizzesList(ref List<Direction> list)
+{
+    try
+    {
+        string[] quizzesPathArray = Directory.GetFiles(Directory.GetCurrentDirectory(), "*quiz.json");
+        string[] top20PathArray = Directory.GetFiles(Directory.GetCurrentDirectory(), "*top20.json");
+
+        for (int i = 0; i < quizzesPathArray.Length; i++)
+        {
+            for (int j = quizzesPathArray[i].Length - 9; j > 0; j--)
+            {
+                if (quizzesPathArray[i][j] == '\\')
+                {
+                    string quizName = quizzesPathArray[i].Remove(0, j + 1);
+                    quizName = quizName.Substring(0, quizName.Length - 9);
+                    list.Add(new Direction(quizName,
+                        JsonConvert.DeserializeObject<List<QuestionBlock>>(File.ReadAllText(quizzesPathArray[i])),
+                        JsonConvert.DeserializeObject<List<UserTop20>>(File.ReadAllText(top20PathArray[i]))));
+                    break;
+                }
+            }
+        }
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Ошибка при чтении списка викторин");
+    }
+}
+
+static void ReadUsersList(ref UserBase userBase)
+{
+    try
+    {
+        userBase = new UserBase(JsonConvert.DeserializeObject<List<User>>(File.ReadAllText("userBase.json")));
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Ошибка чтения данных пользователей");
+    }
+}
+
 static void PlayQuiz(Direction quiz, User user)
 {
     var tempQuiz = new Direction(ref quiz);
@@ -164,7 +243,7 @@ static void PlayQuiz(Direction quiz, User user)
     for (int i = 0; i < 20; i++)
     {
         index = tempQuiz.GetRandomIndexQuestion();
-        tempQuiz.PrintQuestion(index);
+        tempQuiz.PrintQuestion(i);
 
         Console.WriteLine("Введите ваш ответ и нажмите Enter. Правильных ответов может быть один или несколько." +
             "\nЕсли по вашему вы ввели все правильные ответы, введите -1(минус один)");

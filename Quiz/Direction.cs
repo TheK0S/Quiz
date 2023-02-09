@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Quiz
 {
@@ -18,6 +20,12 @@ namespace Quiz
             Name = name;
             questions = new List<QuestionBlock>();
         }
+        public Direction(string name, List<QuestionBlock> questions, List<UserTop20> top20)
+        {
+            Name = name;
+            this.questions = questions;
+            this.top20 = top20;
+        }
         public Direction(ref Direction other)
         {
             this.Name = other.Name;
@@ -26,6 +34,18 @@ namespace Quiz
             {
                 this.questions.Add(other.questions[i]);
             }
+        }
+        public void Serealize()
+        {
+            try
+            {
+                File.WriteAllText($"{Name}quiz.json", JsonConvert.SerializeObject(questions));
+                File.WriteAllText($"{Name}top20.json", JsonConvert.SerializeObject(top20));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Ошибка при сохранении данных викторины");
+            }            
         }
         public bool AddTop20(string name, int value)
         {

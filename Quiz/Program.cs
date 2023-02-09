@@ -15,7 +15,6 @@ ReadQuizzesList(ref Quizzes);
 var userBase = new UserBase(new List<User>());
 ReadUsersList(ref userBase);
 
-string json;
 var userAnswer = new List<int>();
 var ansOpt = new List<string>();
 

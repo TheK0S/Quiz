@@ -65,7 +65,7 @@ while (true)
 
             for(int i = 0; i < 20; i++)
             {
-                Console.WriteLine("Введите вопрос");
+                Console.WriteLine($"Введите вопрос {i+1}");
                 string question = Console.ReadLine() ?? "noquest";
 
                 while (true)
@@ -164,6 +164,7 @@ while (menu)
         Console.WriteLine("2 - Просмотр своих результатов");
         Console.WriteLine("3 - Просмотр 20 лучших результатов викторины");
         Console.WriteLine("4 - Изменить свои данные");
+        Console.WriteLine("0 - Выход");
 
         if (int.TryParse(Console.ReadLine(), out userInput) && userInput >= 0 && userInput <= 4)
             break;
@@ -173,6 +174,13 @@ while (menu)
     switch ((UserMenu)userInput)
     {
         case UserMenu.exit:
+            foreach (var item in Quizzes)
+            {
+                item.Serealize();
+            }
+
+            userBase.Serealize();
+
             Console.WriteLine("Вы вышли из программы");
             menu = false;
             break;

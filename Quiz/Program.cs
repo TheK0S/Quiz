@@ -5,6 +5,7 @@ using System.IO;
 using Quiz;
 using static Quiz.Direction;
 using System.Collections.Generic;
+using System;
 
 //Чтение списка викторин из файла
 var Quizzes = new List<Direction>();
@@ -58,14 +59,54 @@ while (true)
             var questions = new List<QuestionBlock>();
             var top20 = new List<UserTop20>();
             Console.WriteLine("Введите название викторины");
-            string nameQuiz = Console.ReadLine() ?? "";
-            
+            string nameQuiz = Console.ReadLine() ?? "no_name";
 
-            Quizzes.Add(new Direction(nameQuiz, questions, top20));
+            string answer;
+            var answerOptions = new List<string>();
+
+            for(int i = 0; i < 20; i++)
+            {
+                Console.WriteLine("Введите вопрос");
+                string question = Console.ReadLine() ?? "noquest";
+
+                while (true)
+                {
+                    Console.WriteLine("Введите вариант ответа и Enter. Введите 0, если больше нет вариантов ответа");
+                    answer = Console.ReadLine() ?? "0";
+                    if (int.TryParse(answer, out userInput))
+                        break;
+                    else
+                        answerOptions.Add(answer);
+                }
+
+                var rightAnswer = new List<int>();
+
+                Console.WriteLine("Ответы добавлены.\nВведите номер правильного ответа начиная с 0, если их несколько вводите по одному.");
+                while (true)
+                {
+                    Console.WriteLine("Введите номер правильного ответа или -1, чтобы перейти к следующему вопросу");
+                    answer = Console.ReadLine() ?? "-1";
+                    if (int.TryParse(answer, out userInput))
+                    {
+                        if (userInput == -1)
+                            break;
+                        else
+                            rightAnswer.Add(userInput);
+                    }
+                    else
+                        Console.WriteLine("Ошибка ввода. Повторите попытку");
+
+                }
+
+                questions.Add(new QuestionBlock(question, answerOptions, rightAnswer));
+
+
+                Quizzes.Add(new Direction(nameQuiz, questions, top20));
+            }
         }
         if (userInput == 2)
         {
-
+            Console.WriteLine("Функционал будет добавлен в следующих версиях программы");
         }
     }
     else if (userInput == 1)

@@ -11,8 +11,8 @@ namespace Quiz
     internal class Direction
     {
         public string? Name { get; set; }
-        List<QuestionBlock> questions;
-        List<UserTop20> top20 = new List<UserTop20>();
+        public List<QuestionBlock> questions;
+        public List<UserTop20> top20 = new List<UserTop20>();
         
         Random random = new Random();
         public Direction(string name)
@@ -39,13 +39,13 @@ namespace Quiz
         {
             try
             {
-                File.WriteAllText($"{Name}quiz.json", JsonConvert.SerializeObject(questions));
+                File.WriteAllText($"{Name}quiz.json", JsonConvert.SerializeObject(questions, Formatting.Indented));
                 File.WriteAllText($"{Name}top20.json", JsonConvert.SerializeObject(top20));
             }
             catch (Exception)
             {
                 Console.WriteLine("Ошибка при сохранении данных викторины");
-            }            
+            }
         }
         public bool AddTop20(string name, int value)
         {
@@ -121,6 +121,9 @@ namespace Quiz
 
         public int GetRandomIndexQuestion()
         {
+            if (questions.Count == 0)
+                return -1;
+
             return random.Next(0, questions.Count - 1);
         }
 

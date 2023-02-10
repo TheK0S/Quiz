@@ -7,6 +7,8 @@ using static Quiz.Direction;
 using System.Collections.Generic;
 using System;
 
+
+
 //Чтение списка викторин из файла
 var Quizzes = new List<Direction>();
 ReadQuizzesList(ref Quizzes);
@@ -39,7 +41,8 @@ while (true)
         else
             Console.WriteLine("Некоректно введены данные. Повторите попытку");
     }
-    if(userInput == 0)
+    //0 - Редактор викторин
+    if (userInput == 0)
     {
         while(true)
         {
@@ -52,36 +55,40 @@ while (true)
             else
                 Console.WriteLine("Некоректно введены данные. Повторите попытку");
         }
-
-        if(userInput == 1)
+        //Добавить викторину
+        if (userInput == 1)
         {
             var questions = new List<QuestionBlock>();
             var top20 = new List<UserTop20>();
+            var answerOptions = new List<string>();
+            var rightAnswer = new List<int>();
+
             Console.WriteLine("Введите название викторины");
             string nameQuiz = Console.ReadLine() ?? "no_name";
-
+            string question;
             string answer;
-            var answerOptions = new List<string>();
 
-            for(int i = 0; i < 20; i++)
+            for(int i = 0; i < 3; i++)
             {
                 Console.Clear();
                 Console.WriteLine($"Введите вопрос {i+1}");
-                string question = Console.ReadLine() ?? "noquest";
+                question = Console.ReadLine() ?? "noquest";
+
+                answerOptions.Clear();
 
                 while (true)
                 {
                     Console.WriteLine("Введите вариант ответа и Enter. Введите 0, если больше нет вариантов ответа");
                     answer = Console.ReadLine() ?? "0";
-                    if (int.TryParse(answer, out userInput))
+                    if (int.TryParse(answer, out userInput) && userInput == 0)
                         break;
                     else
                         answerOptions.Add(answer);
                 }
 
-                var rightAnswer = new List<int>();
+                rightAnswer.Clear();
 
-                Console.WriteLine("Варианты ответа добавлены.\nВведите номер правильного ответа начиная с 0, если их несколько вводите по одному.");
+                Console.WriteLine("\tВарианты ответа добавлены.\n\nВведите номер правильного ответа начиная с 0, если их несколько вводите по одному.");
                 while (true)
                 {
                     Console.WriteLine("Введите номер правильного ответа или -1, чтобы перейти к следующему вопросу");
@@ -101,17 +108,18 @@ while (true)
 
                 }
 
-                questions.Add(new QuestionBlock(question, answerOptions, rightAnswer));
-
-
-                Quizzes.Add(new Direction(nameQuiz, questions, top20));
+                questions.Add(new QuestionBlock(question, answerOptions, rightAnswer));                
             }
+
+            Quizzes.Add(new Direction(nameQuiz, questions, top20));
         }
+        //Редактор конкретной викторины
         if (userInput == 2)
         {
             Console.WriteLine("Функционал будет добавлен в следующих версиях программы");
         }
     }
+    // 1 - Вход (Авторизация)
     else if (userInput == 1)
     {
         while (true)
@@ -133,6 +141,7 @@ while (true)
         }
         break;
     }
+    //Регистрация
     else if (userInput == 2)
     {
         while (true)
@@ -191,6 +200,11 @@ while (menu)
 
         case UserMenu.startQuiz:
             Console.Clear();
+            if(Quizzes == null || Quizzes.Count == 0)
+            {
+                Console.WriteLine("В приложении нет добавленных викторин");
+                break;
+            }    
             while (true)
             {
                 Console.WriteLine("Выберите викторину");
@@ -251,6 +265,7 @@ static void ReadQuizzesList(ref List<Direction> list)
         string[] quizzesPathArray = Directory.GetFiles(Directory.GetCurrentDirectory(), "*quiz.json");
         string[] top20PathArray = Directory.GetFiles(Directory.GetCurrentDirectory(), "*top20.json");
 
+
         for (int i = 0; i < quizzesPathArray.Length; i++)
         {
             for (int j = quizzesPathArray[i].Length - 9; j > 0; j--)
@@ -259,6 +274,8 @@ static void ReadQuizzesList(ref List<Direction> list)
                 {
                     string quizName = quizzesPathArray[i].Remove(0, j + 1);
                     quizName = quizName.Substring(0, quizName.Length - 9);
+
+
                     list.Add(new Direction(quizName,
                         JsonConvert.DeserializeObject<List<QuestionBlock>>(File.ReadAllText(quizzesPathArray[i])),
                         JsonConvert.DeserializeObject<List<UserTop20>>(File.ReadAllText(top20PathArray[i]))));
@@ -291,37 +308,41 @@ static void PlayQuiz(Direction quiz, User user)
     int index = 0;
     int userPoints = 0;
     int answer;
-    
+    List<int> answers = new List<int>();
+
     for (int i = 0; i < 20; i++)
     {
         index = tempQuiz.GetRandomIndexQuestion();
+        if (index == -1)
+            break;
         tempQuiz.PrintQuestion(i);
 
         Console.WriteLine("Введите ваш ответ и нажмите Enter. Правильных ответов может быть один или несколько." +
             "\nЕсли по вашему вы ввели все правильные ответы, введите -1(минус один)");
-
-        List<int> answers = new List<int>();
-
+              
         while (true)
         {
             Console.WriteLine("Введите номер правильного ответа или -1 для перехода к следующему вопросу");
 
+            answers.Clear();
 
-
-            if (int.TryParse(Console.ReadLine(), out answer) && answer <= 0 && answer >= tempQuiz.GetAnswerCount(index))
-                answers.Add(answer);
-
-            else if (answer == -1)
-                break;
-
+            if (int.TryParse(Console.ReadLine(), out answer) && answer >= -1 && answer <= quiz.GetAnswerCount(index))
+            {
+                if (answer == -1)
+                    break;
+                else
+                    answers.Add(answer);
+            }
             else
                 Console.WriteLine("Ошибка ввода. Повторите попытку");
         }
+
         if (tempQuiz.CheckAnswer(index, answers))
             userPoints++;
 
         tempQuiz.RemoveQuestion(index);
     }
+
     if(quiz.AddTop20(user.Name, userPoints))
         Console.WriteLine("Ваш результат добавлен в топ 20 лучших результатов викторины");
     else

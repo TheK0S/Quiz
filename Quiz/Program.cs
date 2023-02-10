@@ -65,6 +65,7 @@ while (true)
 
             for(int i = 0; i < 20; i++)
             {
+                Console.Clear();
                 Console.WriteLine($"Введите вопрос {i+1}");
                 string question = Console.ReadLine() ?? "noquest";
 
@@ -80,7 +81,7 @@ while (true)
 
                 var rightAnswer = new List<int>();
 
-                Console.WriteLine("Ответы добавлены.\nВведите номер правильного ответа начиная с 0, если их несколько вводите по одному.");
+                Console.WriteLine("Варианты ответа добавлены.\nВведите номер правильного ответа начиная с 0, если их несколько вводите по одному.");
                 while (true)
                 {
                     Console.WriteLine("Введите номер правильного ответа или -1, чтобы перейти к следующему вопросу");
@@ -93,7 +94,10 @@ while (true)
                             rightAnswer.Add(userInput);
                     }
                     else
+                    {
                         Console.WriteLine("Ошибка ввода. Повторите попытку");
+                        Console.ReadKey();
+                    }                        
 
                 }
 
